@@ -1,7 +1,7 @@
 //******************************************************************************
 // Poor man's bubble sort - V1
 
-// This program is a poor man’s implementation of bubble sort, which is a simple
+// Context: This program is a poor man’s implementation of bubble sort, which is a simple
 // sorting algorithm. Despite having poor performance, it serves as a good
 // introduction to algorithms.
 
@@ -61,5 +61,6 @@ int main() {
 // 3, 44, 2, 43, 71, 3, 
 // The array after swapping: 
 // 44, 3, 43, 2, 3, 71, 
+
 
 //******************************************************************************
