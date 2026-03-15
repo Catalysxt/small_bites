@@ -1,3 +1,15 @@
+//******************************************************************************
+// Array Initialization - V2
+//
+// Context: I went overboard with V2, built a basic budget tracker.
+//
+// Description: This program allows the user to enter their expenses for a month.
+// The program will perform various functionality.
+
+//  Ahmad Sarraj
+//  Mar 2025
+//******************************************************************************
+
 #include <iostream>
 #include <array>
 #include <string_view>
@@ -98,7 +110,7 @@ int main () {
 			case 4:
 			{
 				// Identify month with highest and lowest spending
-				float minExp {999999.99};
+				float minExp {999999.99}; // A very large number
 				float maxExp {};
 				// std::size_t required so we can iterate through the array
 				std::size_t monthMin = 0;
@@ -166,11 +178,9 @@ int main () {
 				}
 				break;
 
-
 			default:
 				std::cout << "Invalid selection! Try again\n\n";
 		}
     } while (selection != 7);
 	// Keep looping until exit is selected
-    
-	}
+}
