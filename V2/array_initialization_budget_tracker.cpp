@@ -49,7 +49,7 @@ int main () {
     
     std::array<double, 12> expenses {0.0};
     int selection {}; // Used for capturing user input
-	float budgetGoal{};
+	double budgetGoal{};
 
     do {
 		std::cout << menu;
@@ -58,7 +58,6 @@ int main () {
 		switch (selection)
 		{ 
 			case 1:
-				// Prompt user for month
 				std::cout << "Please select your month as a number with 1 = January: ";
 				int monthNumber;
 				std::cin >> monthNumber;
@@ -69,7 +68,6 @@ int main () {
 					break;
 				}
 
-				// Prompt user for expense
 				std::cout << "\nEnter expenses for " << months[monthNumber - 1] << ": $";
 				double exp;
 				std::cin >> exp;
@@ -101,7 +99,7 @@ int main () {
 			
 			case 3:
 			{
-				float sum {};
+				double sum {};
 				for (std::size_t index = 0; index < months.size(); ++index) {
 					sum += expenses[index];
 				}
@@ -115,8 +113,8 @@ int main () {
 			case 4:
 			{
 				// Identify month with highest and lowest spending
-				float minExp {999999.99}; // A very large number
-				float maxExp {};
+				double minExp {999999.99}; // A very large number
+				double maxExp {};
 				// std::size_t required so we can iterate through the array
 				std::size_t monthMin = 0;
 				std::size_t monthMax = 0;
@@ -169,7 +167,7 @@ int main () {
 					 if (expenses[index] == 0.0) {
 						continue;
 					 }
-					 float difference = expenses[index] - budgetGoal;
+					 double difference = expenses[index] - budgetGoal;
 
 					 std::cout << std::left << std::setw(12) << months[index]
 					           << ": $" << expenses[index] << " spent ";
