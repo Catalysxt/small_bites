@@ -43,13 +43,20 @@ constexpr std::string_view menu = R"(
 7. Exit
 )";
 
+// Forward declarations
+void enterExpensesForMonth(std::array<double, 12>& expenses);
+void viewMonthlyExpenses(std::array<double, 12>& expenses);
+void calcAnnualSpend(std::array<double, 12>& expenses);
+void calcMinMax(std::array<double, 12>& expenses);
+double setBudgetGoal();
+
+
 int main () {
     // Syntax is std::array<type, num of elements>
     
     
-    std::array<double, 12> expenses {0.0};
+    std::array<double, 12> expenses {};
     int selection {}; // Used for capturing user input
-	double budgetGoal{};
 
     do {
 		std::cout << menu;
@@ -57,100 +64,12 @@ int main () {
 
 		switch (selection)
 		{ 
-			case 1:
-				std::cout << "Please select your month as a number with 1 = January: ";
-				int monthNumber;
-				std::cin >> monthNumber;
+			case 1: enterExpensesForMonth(expenses); break;
+			case 2: viewMonthlyExpenses(expenses); break;
+			case 3: calcAnnualSpend(expenses); break;
+			case 4: calcMinMax(expenses); break;
 
-				// Validate input
-				if (monthNumber <1 || monthNumber > 12) {
-					std::cerr << "Please enter a valid month!\n";
-					break;
-				}
-
-				std::cout << "\nEnter expenses for " << months[monthNumber - 1] << ": $";
-				double exp;
-				std::cin >> exp;
-				// Add expenses to the correct month
-				expenses[monthNumber - 1] = exp;
-
-				std::cout << "$ " << exp << " recorded for " << months[monthNumber - 1] << "!\n";
-				break;
-			
-			case 2:
-				std::cout << "MONTHLY EXPENSES\n";
-				// Formating 
-				std::cout << std::left << std::setw(12) << "Month" << "Amount\n";
-				// A partition for clarity 
-				std::cout << std::string(25, '-') << '\n';
-
-				for (std::size_t index = 0; index < months.size(); ++index) {
-					std::cout << std::left
-							  << std::setw(12)
-							  << months[index]
-							  << ": " << "$"
-							  << std::fixed 
-							  << std::setprecision(2)
-							  << expenses[index] << '\n';
-				}
-				// A partition for clarity 
-				std::cout << std::string(25, '-') << '\n';
-				break;
-			
-			case 3:
-			{
-				double sum {};
-				for (std::size_t index = 0; index < months.size(); ++index) {
-					sum += expenses[index];
-				}
-				std::cout << "Total annual spending: " << "$ "
-						  << std::fixed << std::setprecision(2)
-						  << sum << '\n';
-				
-	    		break;
-			} 
-
-			case 4:
-			{
-				// Identify month with highest and lowest spending
-				double minExp {999999.99}; // A very large number
-				double maxExp {};
-				// std::size_t required so we can iterate through the array
-				std::size_t monthMin = 0;
-				std::size_t monthMax = 0;
-				for (std::size_t index = 0; index < expenses.size(); ++index) {
-
-					// Skip unpopulated months
-					if (expenses[index] == 0.0) { continue; }
-
-					// If we've identified a smaller expense
-					if (expenses[index] < minExp) {
-						minExp = expenses[index];
-						monthMin = index; // Attach the month that links to this smallest expense
-					}
-
-					// If we've identified a larger expense
-					if (expenses[index] > maxExp) {
-						maxExp = expenses[index];
-						monthMax = index;
-					}
-				}
-				
-				// Print results
-				std::cout << "Highest spending month: " << months[monthMax]
-						  << " : $" << std::fixed << std::setprecision(2) << maxExp << '\n';
-				std::cout << "Lowest spending month:  " << months[monthMin]
-						  << " : $" << std::fixed << std::setprecision(2) << minExp << '\n';
-				
-						  break;
-			}
-	
-	     	case 5:
-				std::cout << "Enter your monthly budget goal: ";
-				std::cin >> budgetGoal;
-				std::cout << "Budget goal set to $" << budgetGoal << " per month\n";
-
-				break;
+	     	case 5: double budgetGoal = setBudgetGoal(); break;
 	
 			case 6:
 				// Validate if user entered budget goal. If not, exit
@@ -190,4 +109,99 @@ int main () {
 		}
     } while (selection != 7);
 	// Keep looping until exit is selected
+}
+
+// case 1
+void enterExpensesForMonth(std::array<double, 12>& expenses) {
+	std::cout << "Please select your month as a number with 1 = January: ";
+	int monthNumber{};
+	std::cin >> monthNumber;
+
+	// Validate input
+	if (monthNumber < 1 || monthNumber > 12) {
+		std::cerr << "Please enter a valid month!\n";
+		return;
+	}
+
+	std::cout << "\nEnter expenses for " << months[monthNumber - 1] << ": $";
+	double exp{};
+	std::cin >> exp;
+	// Add expenses to the correct month
+	expenses[monthNumber - 1] = exp;
+
+	std::cout << "$" << exp << " recorded for " << months[monthNumber - 1] << "!\n";
+}
+
+// case 2
+void viewMonthlyExpenses(std::array<double, 12>& expenses) {
+	std::cout << "MONTHLY EXPENSES\n";
+	// Formating 
+	std::cout << std::left << std::setw(12) << "Month" << "Amount\n";
+	// A partition for clarity 
+	std::cout << std::string(25, '-') << '\n';
+
+	for (std::size_t index = 0; index < months.size(); ++index) {
+	std::cout << std::left
+				<< std::setw(12)
+				<< months[index]
+				<< ": " << "$"
+				<< std::fixed 
+				<< std::setprecision(2)
+				<< expenses[index] << '\n';
+	}
+	// A partition for clarity 
+	std::cout << std::string(25, '-') << '\n';
+}
+
+// case 3
+void calcAnnualSpend(std::array<double, 12>& expenses) {	
+	double sum {};
+	for (std::size_t index = 0; index < expenses.size(); ++index) {
+		sum += expenses[index];
+	}
+	std::cout << "Total annual spending: " << "$ "
+	<< std::fixed << std::setprecision(2)
+	<< sum << '\n';
+}
+
+// case 4
+void calcMinMax(std::array<double, 12>& expenses) {
+    // Identify month with highest and lowest spending
+	double minExpense {999999.99}; // A very large number
+	double maxExpense {};
+
+	// std::size_t required so we can iterate through the array
+	std::size_t monthMin = 0;
+	std::size_t monthMax = 0;
+	for (std::size_t index = 0; index < expenses.size(); ++index) {
+
+		// Skip unpopulated months
+		if (expenses[index] == 0.0) { continue; }
+
+		// If we've identified a smaller expense
+		if (expenses[index] < minExpense) {
+			minExpense = expenses[index];
+			monthMin = index; // Attach the month that links to this smallest expense
+		}
+
+		// If we've identified a larger expense
+		if (expenses[index] > maxExpense) {
+			maxExpense = expenses[index];
+			monthMax = index;
+		}
+	}
+
+	// Print results
+	std::cout << "Highest spending month: " << months[monthMax]
+				<< " : $" << std::fixed << std::setprecision(2) << maxExpense << '\n';
+	std::cout << "Lowest spending month:  " << months[monthMin]
+				<< " : $" << std::fixed << std::setprecision(2) << minExpense << '\n';
+}
+
+double setBudgetGoal() {
+	double budgetGoal {};
+	std::cout << "Enter your monthly budget goal: ";
+	std::cin >> budgetGoal;
+	std::cout << "Budget goal set to $" << budgetGoal << " per month\n";
+	return budgetGoal;
 }
