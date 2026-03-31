@@ -16,38 +16,43 @@
 #include <iomanip> // For std::left, std::setw()
 #include <string> 
 
+constexpr std::array<std::string_view, 12> months {
+	"January",
+	"February",
+	"March",
+	"April",
+	"May",
+	"June",
+	"July",
+	"August",
+	"September",
+	"October",
+	"November",
+	"December"
+}; 
+
+constexpr std::string_view menu = R"(
+=== MONTHLY BUDGET TRACKER ===
+--- Main Menu ---"
+1. Enter expenses for a month
+2. View all monthly expenses
+3. Calculate total yearly spend
+4. Identify month with highest/lowest spending
+5. Set budget goals
+6. Compare against monthly budget
+7. Exit
+)";
+
 int main () {
     // Syntax is std::array<type, num of elements>
     
-    constexpr std::array<std::string_view, 12> months {
-        "January",
-        "February",
-        "March",
-        "April",
-        "May",
-        "June",
-        "July",
-        "August",
-        "September",
-        "October",
-        "November",
-        "December"
-    }; 
     
     std::array<double, 12> expenses {0.0};
     int selection {}; // Used for capturing user input
 	float budgetGoal{};
 
     do {
-        std::cout << "\n=== MONTHLY BUDGET TRACKER ===";
-        std::cout << "\n--- Main Menu ---";
-        std::cout << "\n1. Enter expenses for a month";
-        std::cout << "\n2. View all monthly expenses";
-        std::cout << "\n3. Calculate total yearly spend";
-        std::cout << "\n4. Identify month with highest/lowest spending";
-		std::cout << "\n5. Set budget goals";
-		std::cout << "\n6. Compare against monthly budget";
-		std::cout << "\n7. Exit \n";
+		std::cout << menu;
 		std::cin >> selection;
 
 		switch (selection)
@@ -60,7 +65,7 @@ int main () {
 
 				// Validate input
 				if (monthNumber <1 || monthNumber > 12) {
-					std::cout << "Please enter a valid month!\n";
+					std::cerr << "Please enter a valid month!\n";
 					break;
 				}
 
@@ -116,19 +121,23 @@ int main () {
 				std::size_t monthMin = 0;
 				std::size_t monthMax = 0;
 				for (std::size_t index = 0; index < expenses.size(); ++index) {
+
 					// Skip unpopulated months
 					if (expenses[index] == 0.0) { continue; }
+
 					// If we've identified a smaller expense
 					if (expenses[index] < minExp) {
 						minExp = expenses[index];
 						monthMin = index; // Attach the month that links to this smallest expense
 					}
+
 					// If we've identified a larger expense
 					if (expenses[index] > maxExp) {
 						maxExp = expenses[index];
 						monthMax = index;
 					}
 				}
+				
 				// Print results
 				std::cout << "Highest spending month: " << months[monthMax]
 						  << " : $" << std::fixed << std::setprecision(2) << maxExp << '\n';
@@ -148,7 +157,7 @@ int main () {
 			case 6:
 				// Validate if user entered budget goal. If not, exit
 				if (budgetGoal == 0.0) {
-					std::cout << "Please enter a budget goal (Option 5)\n";
+					std::cerr << "Please enter a budget goal (Option 5)\n";
 					break;
 				}
 
@@ -179,7 +188,7 @@ int main () {
 				break;
 
 			default:
-				std::cout << "Invalid selection! Try again\n\n";
+				std::cerr << "Invalid selection! Try again\n\n";
 		}
     } while (selection != 7);
 	// Keep looping until exit is selected
