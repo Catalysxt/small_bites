@@ -16,6 +16,8 @@
 #include <iomanip> // For std::left, std::setw()
 #include <string> 
 
+
+// Syntax is std::array<type, num of elements>
 constexpr std::array<std::string_view, 12> months {
 	"January",
 	"February",
@@ -48,15 +50,25 @@ void enterExpensesForMonth(std::array<double, 12>& expenses);
 void viewMonthlyExpenses(std::array<double, 12>& expenses);
 void calcAnnualSpend(std::array<double, 12>& expenses);
 void calcMinMax(std::array<double, 12>& expenses);
-double setBudgetGoal();
+double setBudgetGoal(double& budgetGoal);
+void compareMonthlyBudget(double& budgetGoal, std::array<double, 12>& expenses, std::array<std::string_view, 12> months);
 
+enum menuOptions
+{
+	kEnterExpenses = 1,
+	kViewMonthlyExpenses,
+	kAnnualSpend,
+	kMinMax,
+	kSetBudgetGoal,
+	kCompareBudget,
+	kEXIT = 7
+};
 
-int main () {
-    // Syntax is std::array<type, num of elements>
-    
+int main () {    
     
     std::array<double, 12> expenses {};
     int selection {}; // Used for capturing user input
+	double budgetGoal;
 
     do {
 		std::cout << menu;
@@ -64,50 +76,17 @@ int main () {
 
 		switch (selection)
 		{ 
-			case 1: enterExpensesForMonth(expenses); break;
-			case 2: viewMonthlyExpenses(expenses); break;
-			case 3: calcAnnualSpend(expenses); break;
-			case 4: calcMinMax(expenses); break;
-
-	     	case 5: double budgetGoal = setBudgetGoal(); break;
-	
-			case 6:
-				// Validate if user entered budget goal. If not, exit
-				if (budgetGoal == 0.0) {
-					std::cerr << "Please enter a budget goal (Option 5)\n";
-					break;
-				}
-
-				std::cout << "\n--- BUDGET COMPARISON (Goal: $" << std::fixed << std::setprecision(2) 
-              			<< budgetGoal << " per month) ---\n\n";
-
-				for (std::size_t index = 0; index < months.size(); ++index) {
-					 // Validate if month has a populated expense
-					 if (expenses[index] == 0.0) {
-						continue;
-					 }
-					 double difference = expenses[index] - budgetGoal;
-
-					 std::cout << std::left << std::setw(12) << months[index]
-					           << ": $" << expenses[index] << " spent ";
-					 
-					 if (difference > 0) {
-						std::cout << "(UNDER budget by $" << std::fixed << std::setprecision(2) 
-						          << -difference << ")" << '\n'; 
-					 }
-					 if (difference < 0) {
-						std::cout << "OVER budget by $" << std::fixed << std::setprecision(2)
-						          << difference << ")" << '\n'; 
-					 }
-					 else { std::cout << "Exactly on budget. Congratulations!\n"; }
-
-				}
-				break;
+			case kEnterExpenses: enterExpensesForMonth(expenses); break;
+			case kViewMonthlyExpenses: viewMonthlyExpenses(expenses); break;
+			case kAnnualSpend: calcAnnualSpend(expenses); break;
+			case kMinMax: calcMinMax(expenses); break;
+	     	case kSetBudgetGoal: setBudgetGoal(budgetGoal); break;
+			case kCompareBudget: compareMonthlyBudget(budgetGoal, expenses, months); break;
 
 			default:
 				std::cerr << "Invalid selection! Try again\n\n";
 		}
-    } while (selection != 7);
+    } while (selection != kEXIT);
 	// Keep looping until exit is selected
 }
 
@@ -198,10 +177,44 @@ void calcMinMax(std::array<double, 12>& expenses) {
 				<< " : $" << std::fixed << std::setprecision(2) << minExpense << '\n';
 }
 
-double setBudgetGoal() {
-	double budgetGoal {};
+double setBudgetGoal(double& budgetGoal) {
 	std::cout << "Enter your monthly budget goal: ";
 	std::cin >> budgetGoal;
 	std::cout << "Budget goal set to $" << budgetGoal << " per month\n";
 	return budgetGoal;
+}
+
+void compareMonthlyBudget(double& budgetGoal, std::array<double, 12>& expenses, std::array<std::string_view, 12> months) {
+	// Validate if user entered budget goal. If not, early return
+	if (budgetGoal == 0.0) {
+		std::cerr << "Please enter a budget goal (Option 5)\n";
+		return;
+	}
+
+	std::cout << "\n--- BUDGET COMPARISON (Goal: $" << std::fixed << std::setprecision(2) 
+			<< budgetGoal << " per month) ---\n\n";
+
+	for (std::size_t index = 0; index < months.size(); ++index) {
+			// Validate if month has a populated expense
+			if (expenses[index] == 0.0) {
+			continue;
+			}
+			double difference = expenses[index] - budgetGoal;
+
+			std::cout << std::left << std::setw(12) << months[index]
+					<< ": $" << expenses[index] << " spent ";
+			
+			if (difference > 0) {
+			std::cout << "(UNDER budget by $" << std::fixed << std::setprecision(2) 
+						<< -difference << ")" << '\n'; 
+			}
+
+			else if (difference < 0) {
+			std::cout << "(OVER budget by $" << std::fixed << std::setprecision(2)
+						<< difference << ")" << '\n'; 
+			}
+
+			else { std::cout << "Exactly on budget. Congratulations!\n"; }
+
+	}
 }
