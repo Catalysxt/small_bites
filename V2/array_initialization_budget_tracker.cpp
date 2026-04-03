@@ -15,6 +15,7 @@
 #include <string_view>
 #include <iomanip> // For std::left, std::setw()
 #include <string> 
+#include <format> // For std::format()
 
 
 // Syntax is std::array<type, num of elements>
@@ -35,7 +36,7 @@ constexpr std::array<std::string_view, 12> months {
 
 constexpr std::string_view menu = R"(
 === MONTHLY BUDGET TRACKER ===
---- Main Menu ---"
+--- Main Menu ---
 1. Enter expenses for a month
 2. View all monthly expenses
 3. Calculate total yearly spend
@@ -115,19 +116,14 @@ void enterExpensesForMonth(std::array<double, 12>& expenses) {
 void viewMonthlyExpenses(std::array<double, 12>& expenses) {
 	std::cout << "MONTHLY EXPENSES\n";
 	// Formating 
-	std::cout << std::left << std::setw(12) << "Month" << "Amount\n";
+	std::cout << std::format("{:<12}{}\n", "Month", "Amount");
 	// A partition for clarity 
 	std::cout << std::string(25, '-') << '\n';
 
 	for (std::size_t index = 0; index < months.size(); ++index) {
-	std::cout << std::left
-				<< std::setw(12)
-				<< months[index]
-				<< ": " << "$"
-				<< std::fixed 
-				<< std::setprecision(2)
-				<< expenses[index] << '\n';
-	}
+
+		std::cout << std::format("{:<12}: ${:.2f}\n", months[index], expenses[index]);
+		}
 	// A partition for clarity 
 	std::cout << std::string(25, '-') << '\n';
 }
@@ -138,9 +134,8 @@ void calcAnnualSpend(std::array<double, 12>& expenses) {
 	for (std::size_t index = 0; index < expenses.size(); ++index) {
 		sum += expenses[index];
 	}
-	std::cout << "Total annual spending: " << "$ "
-	<< std::fixed << std::setprecision(2)
-	<< sum << '\n';
+
+	std::cout << std::format("{}: ${:.2f}\n", "Total annual spending", sum);
 }
 
 // case 4
@@ -171,10 +166,10 @@ void calcMinMax(std::array<double, 12>& expenses) {
 	}
 
 	// Print results
-	std::cout << "Highest spending month: " << months[monthMax]
-				<< " : $" << std::fixed << std::setprecision(2) << maxExpense << '\n';
-	std::cout << "Lowest spending month:  " << months[monthMin]
-				<< " : $" << std::fixed << std::setprecision(2) << minExpense << '\n';
+	std::cout << std::format("{:24} {:<10} : ${:.2f}\n", "Highest spending month: ", months[monthMax], maxExpense);
+
+	std::cout << std::format("{:24} {:<10} : ${:.2f}\n", "Lowest spending month: ", months[monthMin], minExpense);
+
 }
 
 double setBudgetGoal(double& budgetGoal) {
@@ -191,8 +186,7 @@ void compareMonthlyBudget(double& budgetGoal, std::array<double, 12>& expenses, 
 		return;
 	}
 
-	std::cout << "\n--- BUDGET COMPARISON (Goal: $" << std::fixed << std::setprecision(2) 
-			<< budgetGoal << " per month) ---\n\n";
+	std::cout << std::format("\n--- BUDGET COMPARISON (Goal: ${:.2f} per month) ---\n\n", budgetGoal);
 
 	for (std::size_t index = 0; index < months.size(); ++index) {
 			// Validate if month has a populated expense
@@ -201,20 +195,16 @@ void compareMonthlyBudget(double& budgetGoal, std::array<double, 12>& expenses, 
 			}
 			double difference = expenses[index] - budgetGoal;
 
-			std::cout << std::left << std::setw(12) << months[index]
-					<< ": $" << expenses[index] << " spent ";
+			std::cout << std::format("{:<10}: ${:<8.2f} spent ", months[index], expenses[index]);
 			
 			if (difference > 0) {
-			std::cout << "(UNDER budget by $" << std::fixed << std::setprecision(2) 
-						<< -difference << ")" << '\n'; 
+				std::cout << std::format("(UNDER budget by ${:.2f})\n", -difference);
 			}
 
 			else if (difference < 0) {
-			std::cout << "(OVER budget by $" << std::fixed << std::setprecision(2)
-						<< difference << ")" << '\n'; 
+			std::cout << std::format("(OVER  budget by ${:.2f})\n", difference);
 			}
 
 			else { std::cout << "Exactly on budget. Congratulations!\n"; }
-
 	}
 }
