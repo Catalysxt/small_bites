@@ -132,7 +132,7 @@ void viewMonthlyExpenses(std::array<double, 12>& expenses) {
 void calcAnnualSpend(std::array<double, 12>& expenses) {	
 	double sum {};
 	for (std::size_t index = 0; index < expenses.size(); ++index) {
-		sum += expenses[index];
+		sum = std::accumulate(std::begin(expenses), std::end(expenses), 0);
 	}
 
 	std::cout << std::format("{}: ${:.2f}\n", "Total annual spending", sum);
