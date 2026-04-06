@@ -1,8 +1,7 @@
 //******************************************************************************
-// Poor man's bubble sort - V2
+// Basic Encryptor - V2
 
 // Description: Let's apply a variation of bubble sort to a real-life application
-// This program is a basic encryptor
 
 //  Ahmad Sarraj
 //  Mar 2025
